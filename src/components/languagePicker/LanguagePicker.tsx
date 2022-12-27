@@ -1,28 +1,40 @@
 import { Language } from "@mui/icons-material";
 import {
+  Button,
   IconButton,
   Menu,
-  MenuItem,
   PopoverOrigin,
   Tooltip,
   Typography,
 } from "@mui/material";
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { useTranslation } from "react-i18next";
+import { useSeeDataContext } from "../../context/SeeDataContext";
+import i18next from "../../i18next";
 import { styles } from "./styles";
 
-const languages = ["RO", "EN"];
+const languages = ["en", "ro"];
 
 export const LanguagePicker = (): JSX.Element => {
   const classes = styles;
+  const { t } = useTranslation();
+  const { selectedLanguage, setSelectedLanguage } = useSeeDataContext();
+
   const [anchorLanguage, setAnchorLanguage] = useState<null | HTMLElement>(
     null
   );
 
+  useEffect(() => {
+    i18next.changeLanguage(selectedLanguage);
+  }, [selectedLanguage]);
+
   return (
     <div>
-      <Tooltip title="Languages">
+      <Tooltip title={t("languages")}>
         <IconButton
-          style={classes.languageButton}
+          disableRipple
+          sx={classes.languageButton}
+          color={"error"}
           onClick={(event: React.MouseEvent<HTMLElement>) => {
             setAnchorLanguage(event.currentTarget);
           }}
@@ -42,14 +54,17 @@ export const LanguagePicker = (): JSX.Element => {
         }}
       >
         {languages.map((language) => (
-          <MenuItem
+          <Button
+            sx={classes.menuItemButton}
+            disableRipple
             key={language}
             onClick={() => {
               setAnchorLanguage(null);
+              setSelectedLanguage(language as string);
             }}
           >
-            <Typography>{language}</Typography>
-          </MenuItem>
+            <Typography>{language.toUpperCase()}</Typography>
+          </Button>
         ))}
       </Menu>
     </div>

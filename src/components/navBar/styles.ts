@@ -17,6 +17,7 @@ export const styles = {
     color: "inherit",
     "&:hover": {
       backgroundColor: "transparent",
+      color: "secondary.contrastText",
     },
     display: {
       xs: "none",
@@ -32,13 +33,11 @@ export const styles = {
       md: "none",
     },
   },
-  languageButton: {
-    color: "inherit",
-  },
   iconButton: {
     backgroundColor: "transparent",
     "&:hover": {
       backgroundColor: "transparent",
+      color: "secondary.contrastText",
     },
   },
   avatar: {
@@ -54,5 +53,12 @@ export const styles = {
   link: {
     color: "inherit",
     textDecoration: "none",
+  },
+  logoutButton: {
+    color: "inherit",
+    "&:hover": {
+      backgroundColor: "transparent",
+      color: "secondary.contrastText",
+    },
   },
 };

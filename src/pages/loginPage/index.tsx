@@ -16,17 +16,21 @@ import { Visibility, VisibilityOff } from "@mui/icons-material";
 
 import { styles as classes } from "./styles";
 import { LanguagePicker } from "../../components/languagePicker/LanguagePicker";
-import axios from "axios";
-
-const url = process.env.REACT_APP_LOCAL_URL;
+import { useTranslation } from "react-i18next";
+import { useNavigate } from "react-router-dom";
+import { useSeeDataContext } from "../../context/SeeDataContext";
+import { loginAPI } from "../../api/loginAPI";
 
 export const LoginPage = () => {
+  const { t } = useTranslation();
+  const navigate = useNavigate();
+  const { setCurrentUser } = useSeeDataContext();
+
   const [loggingError, setLoggingError] = useState<boolean>(false);
   const [showPassword, setShowPassword] = useState<boolean>(false);
-
   const [userValues, setUserValues] = useState<LoginInterface>({
     username: "",
-    passwordValue: "",
+    password: "",
   });
 
   const hadndleInput =
@@ -36,8 +40,19 @@ export const LoginPage = () => {
       setLoggingError(false);
     };
 
-  const handleLogin = () => {
-    console.log("Te iubesc Ioana! <3");
+  const handleKeydown = (event: React.KeyboardEvent<HTMLInputElement>) => {
+    if (event.code === "Enter") {
+      event.preventDefault();
+      handleLogin();
+    }
+  };
+
+  const handleLogin = async () => {
+    if ((await loginAPI(userValues)) === false) {
+      setLoggingError(false);
+      setCurrentUser(userValues.username);
+      navigate("/home");
+    } else setLoggingError(true);
   };
 
   return (
@@ -49,23 +64,27 @@ export const LoginPage = () => {
           </Box>
           <Stack sx={classes.formsStack} spacing={3}>
             <FormControl sx={classes.forms}>
-              <InputLabel color="secondary">Username</InputLabel>
+              <InputLabel color="secondary">{t("username")}</InputLabel>
               <OutlinedInput
                 color="secondary"
-                label="Username"
+                label={t("username")}
                 type="text"
+                error={loggingError}
                 value={userValues.username}
                 onChange={hadndleInput("username")}
+                onKeyDown={handleKeydown}
               />
             </FormControl>
             <FormControl sx={classes.forms}>
-              <InputLabel color="secondary">Password</InputLabel>
+              <InputLabel color="secondary">{t("password")}</InputLabel>
               <OutlinedInput
                 color="secondary"
-                label="Password"
+                label={t("password")}
                 type={showPassword ? "text" : "password"}
-                value={userValues.passwordValue}
-                onChange={hadndleInput("passwordValue")}
+                error={loggingError}
+                value={userValues.password}
+                onChange={hadndleInput("password")}
+                onKeyDown={handleKeydown}
                 endAdornment={
                   <InputAdornment position="end">
                     <IconButton
@@ -86,11 +105,11 @@ export const LoginPage = () => {
               variant="contained"
               onClick={handleLogin}
             >
-              LOG IN
+              {t("login")}
             </Button>
             {loggingError && (
               <Alert sx={classes.alert} severity="error">
-                Incorrect username or password!
+                {t("loggingError")}
               </Alert>
             )}
           </Stack>

@@ -4,5 +4,13 @@ export const styles = {
     paddingTop: "70px",
     display: "flex",
     justifyContent: "center",
+    paddingBottom: "1%",
+  },
+  dataGrid: {
+    marginLeft: "10px",
+    marginRight: "10px",
+  },
+  rows: {
+    backgroundColor: "red",
   },
 };

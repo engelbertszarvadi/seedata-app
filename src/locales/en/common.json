@@ -1,0 +1,15 @@
+{
+  "languages": "Languages",
+  "username": "Username",
+  "password": "Password",
+  "login": "Log in",
+  "logout": "Log out",
+  "loggingError": "Incorrect username or password!",
+  "showData": "SHOW DATA",
+  "generateReports": "GENERATE REPORTS",
+  "idName": "ID",
+  "valueName": "Measurement Value",
+  "unitName": "Measurement Unit",
+  "uploadDate": "Upload Date",
+  "description": "Description"
+}

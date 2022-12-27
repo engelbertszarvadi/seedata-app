@@ -1,0 +1,15 @@
+{
+  "languages": "Limbi",
+  "username": "Nume de utilizator",
+  "password": "Parolă",
+  "login": "Logare",
+  "logout": "Deconectare",
+  "loggingError": "Nume de utilizator sau parolă greșită!",
+  "showData": "ARATĂ DATELE",
+  "generateReports": "GENERARE DE RAPOARTE",
+  "idName": "ID",
+  "valueName": "Valoarea Măsurătorilor",
+  "unitName": "Unitate de Măsură",
+  "uploadDate": "Data Incărcării",
+  "description": "Descriere"
+}

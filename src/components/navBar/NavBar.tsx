@@ -16,17 +16,20 @@ import { styles } from "./styles";
 import MenuIcon from "@mui/icons-material/Menu";
 import React, { useState } from "react";
 import { LanguagePicker } from "../languagePicker/LanguagePicker";
-import { Link, useLocation } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
+import { useTranslation } from "react-i18next";
+import { useSeeDataContext } from "../../context/SeeDataContext";
 
 const pages = ["SHOW DATA", "GENERATE REPORTS"];
 
-const currentUser = "engi";
-
 export const NavBar = (): JSX.Element | null => {
   const classes = styles;
+  const { t } = useTranslation();
+  const navigate = useNavigate();
 
   const [anchorUser, setAnchorUser] = useState<null | HTMLElement>(null);
   const [anchorMenu, setAnchorMenu] = useState<null | HTMLElement>(null);
+  const { currentUser } = useSeeDataContext();
 
   const location = useLocation();
   if (location.pathname === "/") {
@@ -34,11 +37,17 @@ export const NavBar = (): JSX.Element | null => {
   }
 
   const handleMenuClose = () => {
-    setAnchorUser(null);
     setAnchorMenu(null);
+    setAnchorUser(null);
   };
 
-  const editLink = (pages: string) => {
+  const handleLogout = () => {
+    handleMenuClose();
+    navigate("/");
+    sessionStorage.removeItem("currentUser");
+  };
+
+  const editLink = (pages: string, isLink?: boolean) => {
     const editedEndpoint = pages
       .split(" ")
       .map((element: string, index: number) => {
@@ -49,7 +58,8 @@ export const NavBar = (): JSX.Element | null => {
           return firstLetter + element.slice(1).toLowerCase();
         }
       });
-    return `/${editedEndpoint.join("")}`;
+    if (isLink) return `/${editedEndpoint.join("")}`;
+    return `${editedEndpoint.join("")}`;
   };
 
   return (
@@ -87,14 +97,16 @@ export const NavBar = (): JSX.Element | null => {
             </Tooltip>
             {pages.map((page) => (
               <Button
+                disableRipple
                 key={page}
                 sx={classes.buttons}
                 color="secondary"
-                onClick={handleMenuClose}
+                onClick={() => {
+                  handleMenuClose();
+                  navigate(editLink(page, true));
+                }}
               >
-                <Link style={classes.link} to={editLink(page)}>
-                  {page}
-                </Link>
+                {t(`${editLink(page)}`)}
               </Button>
             ))}
             <Menu
@@ -102,15 +114,18 @@ export const NavBar = (): JSX.Element | null => {
               anchorEl={anchorMenu}
               anchorOrigin={classes.transformers as PopoverOrigin}
               transformOrigin={classes.transformers as PopoverOrigin}
-              keepMounted
-              open={Boolean(anchorMenu)}
+              open={!!anchorMenu}
               onClick={handleMenuClose}
             >
               {pages.map((page) => (
-                <MenuItem key={page} onClick={handleMenuClose}>
-                  <Link style={classes.link} to={editLink(page)}>
-                    {page}
-                  </Link>
+                <MenuItem
+                  key={page}
+                  onClick={() => {
+                    handleMenuClose();
+                    navigate(editLink(page, true));
+                  }}
+                >
+                  {t(`${editLink(page)}`)}
                 </MenuItem>
               ))}
             </Menu>
@@ -120,13 +135,14 @@ export const NavBar = (): JSX.Element | null => {
             <Tooltip title="Settings">
               <IconButton
                 sx={classes.iconButton}
+                disableRipple
                 onClick={(event: React.MouseEvent<HTMLElement>) => {
                   setAnchorUser(event.currentTarget);
                 }}
               >
                 <Avatar
                   sx={classes.avatar}
-                  alt={currentUser.toUpperCase()}
+                  alt={currentUser?.toUpperCase()}
                   src="/static/images/avatar"
                 />
               </IconButton>
@@ -138,14 +154,17 @@ export const NavBar = (): JSX.Element | null => {
             anchorOrigin={classes.transformers as PopoverOrigin}
             transformOrigin={classes.transformers as PopoverOrigin}
             keepMounted
-            open={Boolean(anchorUser)}
+            open={!!anchorUser}
             onClick={handleMenuClose}
           >
-            <MenuItem key="logout" onClick={handleMenuClose}>
-              <Link style={classes.link} to="/">
-                LOG OUT
-              </Link>
-            </MenuItem>
+            <Button
+              sx={classes.logoutButton}
+              disableRipple
+              key="logout"
+              onClick={handleLogout}
+            >
+              {t("logout").toUpperCase()}
+            </Button>
           </Menu>
         </Grid>
       </Toolbar>
